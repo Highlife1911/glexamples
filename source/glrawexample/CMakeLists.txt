@@ -5,13 +5,14 @@ message(STATUS "Example ${target}")
 
 # External libraries
 
-# ...
+find_package(glraw REQUIRED)
 
 # Includes
 
 include_directories(
     BEFORE
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${GLRAW_INCLUDES}
 )
 
 
@@ -19,6 +20,7 @@ include_directories(
 
 set(libs
     ${GLEXAMPLES_DEPENDENCY_LIBRARIES}
+    ${GLRAW_LIBRARIES}
 )
 
 
