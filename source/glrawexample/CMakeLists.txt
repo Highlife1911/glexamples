@@ -4,14 +4,36 @@ message(STATUS "Example ${target}")
 
 
 # External libraries
+# Qt5
 
-# ...
+# good resource: http://www.kdab.com/using-cmake-with-qt-5/
+
+# http://qt-project.org/forums/viewthread/30006/
+if(MSVC)
+    cmake_policy(SET CMP0020 NEW)
+endif()
+
+find_package(Qt5Core    5.1 REQUIRED)
+find_package(Qt5Gui     5.1 REQUIRED)
+find_package(Qt5Widgets 5.1 REQUIRED)
+find_package(Qt5OpenGL  5.1 REQUIRED)
+
+if (NOT Qt5Core_FOUND)
+    message("App ${target} skipped: Qt5 not found")
+    return()
+endif()
+
+# Qt5 options
+
+set(CMAKE_AUTOMOC ON)
 
 # Includes
 
 include_directories(
     BEFORE
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${GLRAW_INCLUDE_DIR}
 )
 
 
@@ -19,6 +41,10 @@ include_directories(
 
 set(libs
     ${GLEXAMPLES_DEPENDENCY_LIBRARIES}
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+    Qt5::OpenGL
 )
 
 
