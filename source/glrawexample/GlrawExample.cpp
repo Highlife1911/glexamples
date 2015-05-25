@@ -95,8 +95,8 @@ void GlrawExample::onPaint()
         m_viewportCapability->setChanged(false);
     }
 
-	gl::glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
+//	gl::glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
-	glEnable(gl::GL_DEPTH_TEST);
+//	glEnable(gl::GL_DEPTH_TEST);
 
 }
