@@ -24,10 +24,6 @@
 #include <globjects/Program.h>
 
 #include <qimage.h>
-#include <glraw/AssetInformation.h>
-#include <glraw/Converter.h>
-#include <glraw/ConvertManager.h>
-
 
 using widgetzeug::make_unique;
 
@@ -60,26 +56,45 @@ void GlrawExample::onInitialize()
     debug() << "Using global OS X shader replacement '#version 140' -> '#version 150'" << std::endl;
 #endif
 	/*
-	QImage img = QImage("C:/test.png");
-
+	
 	//Load test file
 	glraw::ConvertManager * manager = new glraw::ConvertManager();
 	manager->setConverter(new glraw::Converter());
 	manager->convert(img, glraw::AssetInformation());
 	*/
-	/*
-	m_program = new globjects::Program;
-	m_program->attach(
+	QImage img("C:/test.png");
+	img = img.convertToFormat(QImage::Format_ARGB32);
+	
+	m_texture = new globjects::Texture;
+	m_texture->image2D(0, gl::GL_RGBA, img.width(), img.height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, img.bits());
+	
+	m_fbo = new globjects::Framebuffer;
+	m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_texture, 0);
+
+	m_program_blur_horizontal = new globjects::Program;
+	m_program_blur_horizontal->attach(
 		globjects::Shader::fromFile(gl::GL_VERTEX_SHADER, "data/glrawexample/default.vert"),
-		globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/glrawexample/blur_horizontal.frag")
-	);*/
+		globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/glrawexample/test.frag")
+		);
+	//m_program_blur_horizontal->setUniform("screenSize", glm::vec2(img.width(), img.height()));
+
+	m_program_blur_vertical = new globjects::Program;
+	m_program_blur_vertical->attach(
+		globjects::Shader::fromFile(gl::GL_VERTEX_SHADER, "data/glrawexample/default.vert"),
+		globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/glrawexample/blur_vertical.frag")
+		);
+	m_program_blur_vertical->setUniform("screenSize", glm::vec2(img.width(), img.height()));
 
 	//Setup quad
-	
+	m_quad = new gloperate::ScreenAlignedQuad(m_texture);
+	//m_quad->setSamplerUniform(0);
+	//m_quad->setTexture(m_texture);
 
-    //glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
+    gl::glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
 
     setupProjection();
+
+	m_fbo->unbind();
 }
 
 void GlrawExample::onPaint()
@@ -96,7 +111,14 @@ void GlrawExample::onPaint()
     }
 
 	gl::glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
+	
+	/*m_fbo->bind();
+	globjects::Framebuffer * targetFBO = m_targetFramebufferCapability->framebuffer() ? m_targetFramebufferCapability->framebuffer() : globjects::Framebuffer::defaultFBO();
 
-	glEnable(gl::GL_DEPTH_TEST);
+	std::array<int, 4> sourceRect = { { 0, 0, 512, 512 } };
+	std::array<int, 4> destRect = { { 0, 0, m_viewportCapability->width(), m_viewportCapability->height() } };
 
+	m_fbo->blit(gl::GL_COLOR_ATTACHMENT0, sourceRect, targetFBO, gl::GL_BACK_LEFT, destRect, gl::GL_COLOR_BUFFER_BIT, gl::GL_NEAREST);
+	m_fbo->unbind();*/
+	m_quad->draw();
 }

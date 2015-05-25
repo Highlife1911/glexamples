@@ -5,9 +5,12 @@
 #include <glbinding/gl/types.h>
 
 #include <globjects/base/ref_ptr.h>
+#include <globjects/Texture.h>
+#include <globjects/Framebuffer.h>
 
 #include <gloperate/painter/Painter.h>
 #include <gloperate/primitives/ScreenAlignedQuad.h>
+
 
 
 namespace globjects
@@ -43,6 +46,9 @@ protected:
     gloperate::AbstractCameraCapability * m_cameraCapability;
 
     /* members */
-    globjects::ref_ptr<globjects::Program> m_program;
+	globjects::ref_ptr<globjects::Program> m_program_blur_horizontal;
+	globjects::ref_ptr<globjects::Program> m_program_blur_vertical;
 	globjects::ref_ptr<gloperate::ScreenAlignedQuad> m_quad;
+	globjects::ref_ptr<globjects::Texture> m_texture;
+	globjects::ref_ptr<globjects::Framebuffer> m_fbo;
 };
