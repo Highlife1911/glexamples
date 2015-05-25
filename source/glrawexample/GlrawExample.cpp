@@ -68,7 +68,7 @@ void GlrawExample::onInitialize()
 	m_texture = globjects::Texture::createDefault(gl::GL_TEXTURE_2D);
 	m_texture->image2D(0, gl::GL_RGBA, img.width(), img.height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, img.bits());
 	m_size = new glm::vec2(img.width(), img.height());
-	
+
 	m_fbo = new globjects::Framebuffer;
 	m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_texture, 0);
 
@@ -126,8 +126,7 @@ void GlrawExample::onPaint()
 	m_program_blur_vertical->release();
 	*/
 
-	//std::array<int, 4> sourceRect = { { 0, 0, m_size->x, m_size->y } };
-	std::array<int, 4> sourceRect = { { 0, 0, m_viewportCapability->width() / 4, m_viewportCapability->height() / 4 } };
+	std::array<int, 4> sourceRect = { { 0, 0, m_size->x, m_size->y } };
 	std::array<int, 4> destRect = { { 0, 0, m_viewportCapability->width(), m_viewportCapability->height() } };
 
 	globjects::Framebuffer * targetFBO = m_targetFramebufferCapability->framebuffer() ? m_targetFramebufferCapability->framebuffer() : globjects::Framebuffer::defaultFBO();
