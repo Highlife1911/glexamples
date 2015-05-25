@@ -63,11 +63,13 @@ set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/")
 
 set(sources
     ${source_path}/GlrawExample.cpp
+    ${source_path}/ScreenAlignedQuad.cpp
     ${source_path}/plugin.cpp
 )
 
 set(api_includes
     ${include_path}/GlrawExample.h
+    ${include_path}/ScreenAlignedQuad.h
 )
 
 # Group source files
