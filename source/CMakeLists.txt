@@ -39,6 +39,7 @@ set(GLEXAMPLES_DEPENDENCY_LIBRARIES
 set(IDE_FOLDER "")
 add_subdirectory(emptyexample)
 add_subdirectory(glrawexample)
+add_subdirectory(openglexample)
 add_subdirectory(transparency)
 add_subdirectory(glexamples-viewer)
 
