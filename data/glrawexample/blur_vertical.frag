@@ -4,13 +4,13 @@ out vec4 fragColor;
 
 in vec2 v_uv;
 
-uniform float size;
 uniform sampler2D source;
+uniform vec2 size;
 
 void main()
 {
 	vec3 color = vec3(0.0);
-        float offset = 1.0 / size;
+        float offset = 1.0 / size.y;
 	
 	for (int i = -20; i <= 20; ++i)
 	{
