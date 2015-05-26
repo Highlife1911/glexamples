@@ -62,7 +62,7 @@ void GlrawExample::onInitialize()
 	manager->setConverter(new glraw::Converter());
 	manager->convert(img, glraw::AssetInformation());
 	*/
-	QImage img("test.png");
+	QImage img("C:/test.png");
 	img = img.mirrored();
 	img = img.convertToFormat(QImage::Format_RGB888);
 	
@@ -89,8 +89,8 @@ void GlrawExample::onInitialize()
 	m_quad = new gloperate::ScreenAlignedQuad(globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/glrawexample/blur_horizontal.frag"), m_texture);
 	m_quad2 = new gloperate::ScreenAlignedQuad(globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/glrawexample/blur_vertical.frag"), m_tex);
 
-	//m_quad->program()->setUniform( "size", m_size );
-	//m_quad2->program()->setUniform( "size", m_size );
+	m_quad->program()->setUniform( "size", (float)img.width());
+	m_quad2->program()->setUniform("size", (float)img.height());
 
 
     gl::glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
