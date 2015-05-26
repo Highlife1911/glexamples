@@ -99,9 +99,11 @@ void GlrawExample::onInitialize()
 
 }
 
+#include <chrono>
+
 void GlrawExample::onPaint()
 {
-
+	auto n = std::chrono::high_resolution_clock::now();
     if (m_viewportCapability->hasChanged())
     {
         gl::glViewport(
@@ -129,4 +131,7 @@ void GlrawExample::onPaint()
 
 	m_fbo2->blit( gl::GL_COLOR_ATTACHMENT0, destRect, targetFBO, gl::GL_BACK_LEFT, sourceRect, gl::GL_COLOR_BUFFER_BIT, gl::GL_LINEAR );
 	m_fbo2->unbind();
+
+	//std::chrono::duration<double> diff = std::chrono::high_resolution_clock::now() - n;
+	std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - n).count() << std::endl;
 }
