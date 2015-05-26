@@ -51,6 +51,7 @@ protected:
 	globjects::ref_ptr<globjects::Program> m_program_blur_vertical;
 	globjects::ref_ptr<globjects::Texture> m_texture;
 	globjects::ref_ptr<globjects::Framebuffer> m_fbo;
+	globjects::ref_ptr<globjects::Framebuffer> m_fbo2;
 	glm::vec2 * m_size; 
 	gloperate::ScreenAlignedQuad * m_quad;
 	gloperate::ScreenAlignedQuad * m_quad2;

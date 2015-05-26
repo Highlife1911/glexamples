@@ -63,51 +63,44 @@ void GlrawExample::onInitialize()
 	manager->convert(img, glraw::AssetInformation());
 	*/
 	QImage img("test.png");
-	img = img.convertToFormat(QImage::Format_ARGB32);
+	img = img.mirrored();
+	img = img.convertToFormat(QImage::Format_RGB888);
 	
 	m_texture = globjects::Texture::createDefault(gl::GL_TEXTURE_2D);
-	m_texture->image2D(0, gl::GL_RGBA, img.width(), img.height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, img.bits());
+	m_texture->image2D(0, gl::GL_RGB, img.width(), img.height(), 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, img.bits());
 
-	auto m_tex = globjects::Texture::createDefault(gl::GL_TEXTURE_2D);
-	m_tex->image2D(0, gl::GL_RGBA, img.width(), img.height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
+	auto m_tex = globjects::Texture::createDefault( gl::GL_TEXTURE_2D );
+	m_tex->image2D( 0, gl::GL_RGB, img.width(), img.height(), 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, nullptr );
+
+	auto m_text = globjects::Texture::createDefault( gl::GL_TEXTURE_2D );
+	m_text->image2D( 0, gl::GL_RGB, img.width(), img.height(), 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, nullptr );
 
 	m_size = new glm::vec2(img.width(), img.height());
 
 	m_fbo = new globjects::Framebuffer;
 	m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_tex, 0);
+	m_fbo->unbind();
+
+	m_fbo2 = new globjects::Framebuffer;
+	m_fbo2->attachTexture( gl::GL_COLOR_ATTACHMENT0, m_text, 0 );
+	m_fbo2->unbind();
 
 	//Setup quad
 	m_quad = new gloperate::ScreenAlignedQuad(globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/glrawexample/blur_horizontal.frag"), m_texture);
 	m_quad2 = new gloperate::ScreenAlignedQuad(globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/glrawexample/blur_vertical.frag"), m_tex);
-	/*
-	m_program_blur_horizontal = new globjects::Program;
-	m_program_blur_horizontal->attach(
-		globjects::Shader::fromFile(gl::GL_VERTEX_SHADER, "data/glrawexample/default.vert"),
-		globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/glrawexample/blur_horizontal.frag")
-		);
-	m_program_blur_horizontal->setUniform("size", m_size);
 
-	m_program_blur_vertical = new globjects::Program;
-	m_program_blur_vertical->attach(
-		globjects::Shader::fromFile(gl::GL_VERTEX_SHADER, "data/glrawexample/default.vert"),
-		globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/glrawexample/blur_vertical.frag")
-		);
-	m_program_blur_vertical->setUniform("size", m_size);*/
-	//m_quad->program()->setUniform("size", m_size);
+	//m_quad->program()->setUniform( "size", m_size );
+	//m_quad2->program()->setUniform( "size", m_size );
+
 
     gl::glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
 
     setupProjection();
 
-	m_fbo->unbind();
 }
 
 void GlrawExample::onPaint()
 {
-	/*
-	static int x = 0;
-	while (x == 1);
-	x++;*/
 
     if (m_viewportCapability->hasChanged())
     {
@@ -120,39 +113,20 @@ void GlrawExample::onPaint()
         m_viewportCapability->setChanged(false);
     }
 	
-	//m_quad->m_vao->bind();
-	//m_program_blur_horizontal->use();
-	//gl::glClear(gl::GL_COLOR_BUFFER_BIT);
+	gl::glClear(gl::GL_COLOR_BUFFER_BIT);
 
 	m_fbo->bind();
-	//gl::glClear(gl::GL_COLOR_BUFFER_BIT);
-
 	m_quad->draw();
 	m_fbo->unbind();
-	//m_fbo->unbind();
-	//gl::glClear(gl::GL_COLOR_BUFFER_BIT);
-	/*
-	std::array<int, 4> sourceRect = { { 0, 0, m_size->x, m_size->y } };
-	auto c = m_fbo->readPixelsToByteArray(sourceRect, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE);
-	auto d = globjects::Texture::createDefault(gl::GL_TEXTURE_2D);
-	d->image2D(0, gl::GL_RGBA, 1024, 1024, 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, c.data());
 
-	m_quad2->setTexture(d);*/
+	m_fbo2->bind();
 	m_quad2->draw();
-	//m_program_blur_horizontal->release();
 	
-	/*
-	m_program_blur_vertical->use();
-	m_quad->draw();
-	m_program_blur_vertical->release();
-	*/
-
-	/*
 	std::array<int, 4> sourceRect = { { 0, 0, m_size->x, m_size->y } };
-	std::array<int, 4> destRect = { { 0, 0, m_viewportCapability->width(), m_viewportCapability->height() } };
+	std::array<int, 4> destRect = { { 0, 0, std::min( m_viewportCapability->width(), (int)m_size->x), std::min( m_viewportCapability->height(), (int) m_size->y ) } };
 
 	globjects::Framebuffer * targetFBO = m_targetFramebufferCapability->framebuffer() ? m_targetFramebufferCapability->framebuffer() : globjects::Framebuffer::defaultFBO();
 
-	m_fbo->blit(gl::GL_COLOR_ATTACHMENT0, sourceRect, targetFBO, gl::GL_BACK_LEFT, destRect, gl::GL_COLOR_BUFFER_BIT, gl::GL_NEAREST);
-	m_fbo->unbind();*/
+	m_fbo2->blit( gl::GL_COLOR_ATTACHMENT0, destRect, targetFBO, gl::GL_BACK_LEFT, sourceRect, gl::GL_COLOR_BUFFER_BIT, gl::GL_LINEAR );
+	m_fbo2->unbind();
 }
