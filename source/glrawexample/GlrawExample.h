@@ -11,6 +11,7 @@
 
 #include <gloperate/painter/Painter.h>
 
+#include <gloperate\primitives\ScreenAlignedQuad.h>
 
 
 namespace globjects
@@ -51,5 +52,6 @@ protected:
 	globjects::ref_ptr<globjects::Texture> m_texture;
 	globjects::ref_ptr<globjects::Framebuffer> m_fbo;
 	glm::vec2 * m_size; 
-	ScreenAlignedQuad * m_quad;
+	gloperate::ScreenAlignedQuad * m_quad;
+	gloperate::ScreenAlignedQuad * m_quad2;
 };
