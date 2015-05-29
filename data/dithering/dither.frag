@@ -2,12 +2,10 @@
 
 out vec4 fragColor;
 
-in vec2 v_uv;
-
 layout(rgba8) uniform image2D source;
-uniform ivec2 img_size;
 uniform int chunk_size;
-uniform int num_colors = 4;
+uniform int num_colors;
+
 
 float find_color( float color )
 {
@@ -16,9 +14,19 @@ float find_color( float color )
 	return c/(num_colors-1);
 }
 
-void add_color( float add, ivec2 pos )
+float greyscale( vec3 data )
 {
-	vec3 data = vec3( imageLoad(source, pos).r + add );
+	return clamp( (0.2126*data.r) + (0.7152*data.g) + (0.0722*data.b), 0.0, 1.0 );
+}
+
+void add_color( float add, ivec2 base, ivec2 pos )
+{
+	//prevent writing over borders
+	float over_x = step( pos.x+1, base.x + chunk_size );
+	float over_y = step( pos.y+1, base.y + chunk_size );
+	float factor = min( over_x, over_y );	
+
+	vec3 data = imageLoad(source, pos).xyz + vec3( factor * add );
 	imageStore(source, pos, vec4(data, 1.0));
 }
 
@@ -32,7 +40,7 @@ void main()
 		for( int x = 0; x < chunk_size; x++ )
 		{
 			ivec2 act_pos = pos + ivec2(x,y);
-			float data = imageLoad(source, act_pos).x;
+			float data = greyscale( imageLoad(source, act_pos).xyz );
 			float c = find_color( data );
 		
 			//update current
@@ -40,10 +48,10 @@ void main()
 			imageStore(source, act_pos, vec4(md, 1.0));
 		
 			float diff = (data - c) / 16;
-			add_color( diff * 7, act_pos + ivec2( 1,0) );
-			add_color( diff * 3, act_pos + ivec2(-1,1) );
-			add_color( diff * 5, act_pos + ivec2( 0,1) );
-			add_color( diff * 1, act_pos + ivec2( 1,1) );
+			add_color( diff * 7, pos, act_pos + ivec2( 1,0) );
+			add_color( diff * 3, pos, act_pos + ivec2(-1,1) );
+			add_color( diff * 5, pos, act_pos + ivec2( 0,1) );
+			add_color( diff * 1, pos, act_pos + ivec2( 1,1) );
 		}
 	}
 

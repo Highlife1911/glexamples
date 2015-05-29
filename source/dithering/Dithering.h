@@ -10,6 +10,7 @@
 
 #include <gloperate-qt/QtTextureLoader.h>
 
+#include "DitheringOptions.h"
 
 namespace globjects
 {
@@ -31,13 +32,16 @@ public:
 	Dithering( gloperate::ResourceManager & resourceManager );
 	virtual ~Dithering();
 
-	int chunkSize() const;
-	void setChunkSize(int size);
-
+	void setOptionsChanged();
 
 protected:
     virtual void onInitialize() override;
     virtual void onPaint() override;
+
+	void loadTexture();
+	void setupFramebuffer();
+	void updateUniforms();
+	void dither();
 
 protected:
     /* capabilities */
@@ -46,15 +50,14 @@ protected:
 
     /* members */
 	const gloperate_qt::QtTextureLoader m_loader;
+	DitheringOptions m_options;
 
-	globjects::ref_ptr<globjects::Texture> m_texture;
+	globjects::ref_ptr<globjects::Texture> m_dithered;
 	globjects::ref_ptr<globjects::Texture> m_comptex;
 	globjects::ref_ptr<globjects::Framebuffer> m_fbo;
-	globjects::ref_ptr<globjects::Framebuffer> m_fbo2;
-	gloperate::ScreenAlignedQuad * m_quad;
-	gloperate::ScreenAlignedQuad * m_quad2;
-	gloperate::ScreenAlignedQuad * m_copyquad;
+	globjects::ref_ptr<gloperate::ScreenAlignedQuad> m_quad;
+	globjects::ref_ptr<gloperate::ScreenAlignedQuad> m_screen;
 
 	glm::ivec2 m_textureSize;
-	int m_chunkSize;
+	bool m_changed;
 };
