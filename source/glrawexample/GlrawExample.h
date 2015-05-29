@@ -7,6 +7,7 @@
 #include <globjects/base/ref_ptr.h>
 
 #include <gloperate/painter/Painter.h>
+#include <gloperate/primitives/ScreenAlignedQuad.h>
 
 
 namespace globjects
@@ -16,8 +17,6 @@ namespace globjects
 
 namespace gloperate
 {
-    class AdaptiveGrid;
-    class Icosahedron;
     class AbstractTargetFramebufferCapability;
     class AbstractViewportCapability;
     class AbstractPerspectiveProjectionCapability;
@@ -44,8 +43,6 @@ protected:
     gloperate::AbstractCameraCapability * m_cameraCapability;
 
     /* members */
-    globjects::ref_ptr<gloperate::AdaptiveGrid> m_grid;
-    globjects::ref_ptr<gloperate::Icosahedron> m_icosahedron;
     globjects::ref_ptr<globjects::Program> m_program;
-    gl::GLint m_transformLocation;
+	globjects::ref_ptr<gloperate::ScreenAlignedQuad> m_quad;
 };

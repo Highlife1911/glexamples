@@ -1,7 +1,6 @@
 #include "GlrawExample.h"
 
 #include <glm/gtc/constants.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include <glbinding/gl/enum.h>
 #include <glbinding/gl/bitfield.h>
@@ -9,7 +8,7 @@
 #include <globjects/globjects.h>
 #include <globjects/logging.h>
 #include <globjects/DebugMessage.h>
-#include <globjects/Program.h>
+
 
 #include <widgetzeug/make_unique.hpp>
 
@@ -21,13 +20,14 @@
 #include <gloperate/painter/CameraCapability.h>
 #include <gloperate/painter/VirtualTimeCapability.h>
 
-#include <gloperate/primitives/AdaptiveGrid.h>
-#include <gloperate/primitives/Icosahedron.h>
+#include <globjects/Shader.h>
+#include <globjects/Program.h>
 
+#include <qimage.h>
+#include <glraw/AssetInformation.h>
+#include <glraw/Converter.h>
+#include <glraw/ConvertManager.h>
 
-using namespace gl;
-using namespace glm;
-using namespace globjects;
 
 using widgetzeug::make_unique;
 
@@ -44,13 +44,7 @@ GlrawExample::~GlrawExample() = default;
 
 void GlrawExample::setupProjection()
 {
-    static const auto zNear = 0.3f, zFar = 15.f, fovy = 50.f;
-
-    m_projectionCapability->setZNear(zNear);
-    m_projectionCapability->setZFar(zFar);
-    m_projectionCapability->setFovy(radians(fovy));
-
-    m_grid->setNearFar(zNear, zFar);
+    //static const auto zNear = 0.3f, zFar = 15.f, fovy = 50.f;
 }
 
 void GlrawExample::onInitialize()
@@ -65,21 +59,25 @@ void GlrawExample::onInitialize()
 
     debug() << "Using global OS X shader replacement '#version 140' -> '#version 150'" << std::endl;
 #endif
+	/*
+	QImage img = QImage("C:/test.png");
 
-    m_grid = new gloperate::AdaptiveGrid{};
-    m_grid->setColor({0.6f, 0.6f, 0.6f});
+	//Load test file
+	glraw::ConvertManager * manager = new glraw::ConvertManager();
+	manager->setConverter(new glraw::Converter());
+	manager->convert(img, glraw::AssetInformation());
+	*/
+	/*
+	m_program = new globjects::Program;
+	m_program->attach(
+		globjects::Shader::fromFile(gl::GL_VERTEX_SHADER, "data/glrawexample/default.vert"),
+		globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/glrawexample/blur_horizontal.frag")
+	);*/
 
-    m_icosahedron = new gloperate::Icosahedron{3};
+	//Setup quad
+	
 
-    m_program = new Program{};
-    m_program->attach(
-        Shader::fromFile(GL_VERTEX_SHADER, "data/GlrawExample/icosahedron.vert"),
-        Shader::fromFile(GL_FRAGMENT_SHADER, "data/GlrawExample/icosahedron.frag")
-    );
-
-    m_transformLocation = m_program->getUniformLocation("transform");
-
-    glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
+    //glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
 
     setupProjection();
 }
@@ -88,7 +86,7 @@ void GlrawExample::onPaint()
 {
     if (m_viewportCapability->hasChanged())
     {
-        glViewport(
+        gl::glViewport(
             m_viewportCapability->x(),
             m_viewportCapability->y(),
             m_viewportCapability->width(),
@@ -97,29 +95,8 @@ void GlrawExample::onPaint()
         m_viewportCapability->setChanged(false);
     }
 
-    auto fbo = m_targetFramebufferCapability->framebuffer();
+	gl::glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
-    if (!fbo)
-        fbo = globjects::Framebuffer::defaultFBO();
+	glEnable(gl::GL_DEPTH_TEST);
 
-    fbo->bind(GL_FRAMEBUFFER);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glEnable(GL_DEPTH_TEST);
-
-    const auto transform = m_projectionCapability->projection() * m_cameraCapability->view();
-    const auto eye = m_cameraCapability->eye();
-
-    m_grid->update(eye, transform);
-    m_grid->draw();
-
-    m_program->use();
-    m_program->setUniform(m_transformLocation, transform);
-
-    m_icosahedron->draw();
-
-    m_program->release();
-
-    Framebuffer::unbind(GL_FRAMEBUFFER);
 }

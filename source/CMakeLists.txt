@@ -12,6 +12,7 @@ find_package(glbinding REQUIRED)
 find_package(globjects REQUIRED)
 find_package(gloperate REQUIRED)
 find_package(libzeug REQUIRED)
+find_package(glraw REQUIRED)
 
 # Include directories
 include_directories(
@@ -22,6 +23,7 @@ include_directories(
     ${GLOBJECTS_INCLUDES}
     ${GLOPERATE_INCLUDES}
     ${LIBZEUG_INCLUDES}
+    ${GLRAW_INCLUDES}
 )
 
 # Define common libraries for all examples
@@ -30,6 +32,7 @@ set(GLEXAMPLES_DEPENDENCY_LIBRARIES
     ${GLOBJECTS_LIBRARIES}
     ${GLOPERATE_LIBRARIES}
     ${LIBZEUG_LIBRARIES}
+    ${GLRAW_LIBRARIES}
 )
 
 # Applications
