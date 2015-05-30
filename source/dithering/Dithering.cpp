@@ -33,17 +33,16 @@ Dithering::Dithering( gloperate::ResourceManager & resourceManager )
 ,	m_options(this)
 ,	m_changed(false)
 {
-	//addProperty<std::string>("image", this, &Dithering::imageFilename, &Dithering::setImageFilename);
 }
 
 Dithering::~Dithering() = default;
 
 void Dithering::loadTexture()
 {
-	m_dithered = m_loader.load("data/dithering/dithering.png", std::function<void(int, int)>());
+	m_dithered = m_loader.load(m_options.imagePathString(), std::function<void(int, int)>());
 	if (m_dithered == nullptr)
 	{
-		globjects::fatal() << "Couldn't load image!";
+		globjects::fatal() << "Couldn't load image: " << m_options.imagePathString() << " !";
 	}
 
 	m_textureSize.x = m_dithered->getLevelParameter(0, gl::GL_TEXTURE_WIDTH);
@@ -75,6 +74,7 @@ void Dithering::updateUniforms()
 {
 	m_quad->program()->setUniform("chunk_size", m_options.chunkSize());
 	m_quad->program()->setUniform("num_colors", m_options.greyscalePalette());
+	m_quad->program()->setUniform("grey", m_options.formulaData());
 }
 
 void Dithering::dither()

@@ -1,11 +1,24 @@
 #pragma once
+
+#include <glm/vec3.hpp>
+
+#include <reflectionzeug/FilePath.h>
+
 class Dithering;
+
+using reflectionzeug::FilePath;
 
 enum class DitheringPalette
 {
 	Greyscale,
 	Reduced,
 	Full
+};
+
+enum class GreyscaleFormula
+{
+	Classic,
+	Modern
 };
 
 class DitheringOptions
@@ -22,6 +35,14 @@ public:
 	int greyscalePalette() const;
 	void setGreyscalePalette(int colors);
 
+	GreyscaleFormula formula() const;
+	void setFormula(GreyscaleFormula f);
+	glm::vec3 formulaData() const;
+
+	FilePath imagePath() const;
+	std::string imagePathString() const;
+	void setImagePath(FilePath path);
+
 private:
 
 	Dithering * const m_owner;
@@ -29,4 +50,6 @@ private:
 	int m_chunkSize;
 	DitheringPalette m_palette;
 	int m_greyscalePalette;
+	std::string m_imagePath;
+	GreyscaleFormula m_formula;
 };

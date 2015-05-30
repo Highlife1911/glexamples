@@ -5,6 +5,7 @@ out vec4 fragColor;
 layout(rgba8) uniform image2D source;
 uniform int chunk_size;
 uniform int num_colors;
+uniform vec3 grey;
 
 
 float find_color( float color )
@@ -16,7 +17,7 @@ float find_color( float color )
 
 float greyscale( vec3 data )
 {
-	return clamp( (0.2126*data.r) + (0.7152*data.g) + (0.0722*data.b), 0.0, 1.0 );
+	return clamp( (grey.r*data.r) + (grey.g*data.g) + (grey.b*data.b), 0.0, 1.0 );
 }
 
 void add_color( float add, ivec2 base, ivec2 pos )
