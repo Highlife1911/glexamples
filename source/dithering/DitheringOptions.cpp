@@ -17,7 +17,7 @@ DitheringOptions::DitheringOptions(Dithering * owner)
 	owner->addProperty<int>("chunk_size", this,
 		&DitheringOptions::chunkSize,
 		&DitheringOptions::setChunkSize)->setOptions({
-			{ "minimum", 2 },
+			{ "minimum", 8 },
 			{ "maximum", 1024 } });
 
 	owner->addProperty<DitheringPalette>("palette", this,

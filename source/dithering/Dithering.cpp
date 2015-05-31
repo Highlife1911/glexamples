@@ -15,6 +15,8 @@
 #include <globjects/Shader.h>
 #include <globjects/Texture.h>
 
+#include <gloperate/painter/AbstractInputCapability.h>
+#include <gloperate/painter/InputCapability.h>
 #include <gloperate/painter/TargetFramebufferCapability.h>
 #include <gloperate/painter/ViewportCapability.h>
 #include <gloperate/primitives/ScreenAlignedQuad.h>
@@ -33,6 +35,7 @@ Dithering::Dithering( gloperate::ResourceManager & resourceManager )
 ,	m_options(this)
 ,	m_changed(false)
 {
+	auto x = new gloperate::InputCapability();
 }
 
 Dithering::~Dithering() = default;

@@ -8,6 +8,14 @@ class Dithering;
 
 using reflectionzeug::FilePath;
 
+enum class DitheringMethod
+{
+	Nearest,
+	FloydSteinberg,
+	Jarvis,
+	Stucki
+};
+
 enum class DitheringPalette
 {
 	Greyscale,
