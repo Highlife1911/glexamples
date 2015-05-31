@@ -19,24 +19,24 @@
 #include <gloperate/painter/PerspectiveProjectionCapability.h>
 #include <gloperate/painter/CameraCapability.h>
 #include <gloperate/painter/VirtualTimeCapability.h>
+#include <gloperate/painter/InputCapability.h>
+#include <gloperate/input/KeyboardInputHandler.h>
 
 #include <globjects/Shader.h>
 #include <globjects/Program.h>
 
-#include <qimage.h>
-#include <glraw/AssetInformation.h>
-#include <glraw/Converter.h>
-#include <glraw/ConvertManager.h>
+#include <gloperate-qt/QtTextureLoader.h>
 
 
 using widgetzeug::make_unique;
 
 GlrawExample::GlrawExample(gloperate::ResourceManager & resourceManager)
-:   Painter(resourceManager)
-,   m_targetFramebufferCapability(addCapability(new gloperate::TargetFramebufferCapability()))
-,   m_viewportCapability(addCapability(new gloperate::ViewportCapability()))
-,   m_projectionCapability(addCapability(new gloperate::PerspectiveProjectionCapability(m_viewportCapability)))
-,   m_cameraCapability(addCapability(new gloperate::CameraCapability()))
+	: Painter(resourceManager)
+	, m_targetFramebufferCapability(addCapability(new gloperate::TargetFramebufferCapability()))
+	, m_viewportCapability(addCapability(new gloperate::ViewportCapability()))
+	, m_projectionCapability(addCapability(new gloperate::PerspectiveProjectionCapability(m_viewportCapability)))
+	, m_cameraCapability(addCapability(new gloperate::CameraCapability()))
+	, m_inputCapability(addCapability(new gloperate::InputCapability()))
 {
 }
 
@@ -59,27 +59,19 @@ void GlrawExample::onInitialize()
 
     debug() << "Using global OS X shader replacement '#version 140' -> '#version 150'" << std::endl;
 #endif
-	/*
-	QImage img = QImage("C:/test.png");
+	gloperate_qt::QtTextureLoader * loader = new gloperate_qt::QtTextureLoader;
+	m_texture = loader->load("C:/test.png", nullptr);
 
-	//Load test file
-	glraw::ConvertManager * manager = new glraw::ConvertManager();
-	manager->setConverter(new glraw::Converter());
-	manager->convert(img, glraw::AssetInformation());
-	*/
-	/*
-	m_program = new globjects::Program;
-	m_program->attach(
-		globjects::Shader::fromFile(gl::GL_VERTEX_SHADER, "data/glrawexample/default.vert"),
-		globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/glrawexample/blur_horizontal.frag")
-	);*/
+	m_pos = new glm::vec2(0.f, 0.f);
+	m_size = new glm::vec2(m_viewportCapability->width(), m_viewportCapability->height());
+	m_zoom = 1.f;
+	m_quad = new gloperate::ScreenAlignedQuad(globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/glrawexample/screen.frag"), m_texture);
+	m_quad->program()->setUniform("size", *m_size);
 
-	//Setup quad
-	
+	gl::glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
 
-    //glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
-
-    setupProjection();
+	m_inputHandler = new InputHandling(this);
+	m_inputCapability->addKeyboardHandler(m_inputHandler);
 }
 
 void GlrawExample::onPaint()
@@ -91,12 +83,14 @@ void GlrawExample::onPaint()
             m_viewportCapability->y(),
             m_viewportCapability->width(),
             m_viewportCapability->height());
+		m_size->x = m_viewportCapability->width();
+		m_size->y = m_viewportCapability->height();
 
         m_viewportCapability->setChanged(false);
     }
 
-//	gl::glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
-
-//	glEnable(gl::GL_DEPTH_TEST);
-
+	gl::glClear(gl::GL_COLOR_BUFFER_BIT);
+	m_quad->program()->setUniform("pos", *m_pos);
+	m_quad->program()->setUniform("zoom", m_zoom);
+	m_quad->draw();
 }
