@@ -27,7 +27,6 @@
 
 #include <gloperate-qt/QtTextureLoader.h>
 
-
 using widgetzeug::make_unique;
 
 GlrawExample::GlrawExample(gloperate::ResourceManager & resourceManager)
@@ -61,6 +60,10 @@ void GlrawExample::onInitialize()
 #endif
 	gloperate_qt::QtTextureLoader * loader = new gloperate_qt::QtTextureLoader;
 	m_texture = loader->load("C:/test.png", nullptr);
+	if (m_filter.addFilter("grayscale", QVariantMap()))
+	{
+		m_filter.process(m_texture);
+	}
 
 	m_pos = new glm::vec2(0.f, 0.f);
 	m_size = new glm::vec2(m_viewportCapability->width(), m_viewportCapability->height());

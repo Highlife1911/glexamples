@@ -21,11 +21,8 @@
 #include <gloperate/painter/ViewportCapability.h>
 #include <gloperate/primitives/ScreenAlignedQuad.h>
 
-#include <widgetzeug/make_unique.hpp>
 
 #include <reflectionzeug/PropertyGroup.h>
-
-using widgetzeug::make_unique;
 
 
 Dithering::Dithering( gloperate::ResourceManager & resourceManager )
@@ -35,14 +32,13 @@ Dithering::Dithering( gloperate::ResourceManager & resourceManager )
 ,	m_options(this)
 ,	m_changed(false)
 {
-	auto x = new gloperate::InputCapability();
 }
 
 Dithering::~Dithering() = default;
 
 void Dithering::loadTexture()
 {
-	m_dithered = m_loader.load(m_options.imagePathString(), std::function<void(int, int)>());
+	m_dithered = m_loader.load(m_options.imagePathString(), nullptr);
 	if (m_dithered == nullptr)
 	{
 		globjects::fatal() << "Couldn't load image: " << m_options.imagePathString() << " !";

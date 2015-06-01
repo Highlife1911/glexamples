@@ -1,6 +1,6 @@
 #pragma once
 
-#include "InputHandling.h";
+#include "InputHandling.h"
 
 #include <memory>
 
@@ -14,6 +14,7 @@
 
 #include <gloperate\primitives\ScreenAlignedQuad.h>
 
+#include <gloperate-glraw/TextureFilter.h>
 
 namespace globjects
 {
@@ -60,4 +61,5 @@ protected:
 	gloperate::ScreenAlignedQuad * m_quad;
 
 	InputHandling * m_inputHandler;
+	gloperate_glraw::TextureFilter m_filter;
 };
