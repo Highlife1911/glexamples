@@ -4,6 +4,7 @@
 
 #include <glbinding/gl/enum.h>
 #include <glbinding/gl/bitfield.h>
+#include <glbinding/Binding.h>
 
 #include <globjects/globjects.h>
 #include <globjects/logging.h>
@@ -59,10 +60,11 @@ void GlrawExample::onInitialize()
     debug() << "Using global OS X shader replacement '#version 140' -> '#version 150'" << std::endl;
 #endif
 	gloperate_qt::QtTextureLoader * loader = new gloperate_qt::QtTextureLoader;
-	m_texture = loader->load("C:/test.png", nullptr);
+	auto tmp = loader->load("C:/test.png", nullptr);
+
 	if (m_filter.addFilter("grayscale", QVariantMap()))
 	{
-		m_filter.process(m_texture);
+		m_texture = m_filter.process(tmp);
 	}
 
 	m_pos = new glm::vec2(0.f, 0.f);
