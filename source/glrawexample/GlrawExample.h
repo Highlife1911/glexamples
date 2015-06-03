@@ -47,9 +47,7 @@ protected:
     virtual void onPaint() override;
 
 public:
-	glm::vec2 * m_pos;
-	glm::vec2 * m_size;
-	float m_zoom;
+	glm::vec2 m_size;
 
 protected:
     /* capabilities */
@@ -63,7 +61,7 @@ protected:
 	globjects::ref_ptr<globjects::Program> m_program_blur_horizontal;
 	globjects::ref_ptr<globjects::Program> m_program_blur_vertical;
 	globjects::ref_ptr<globjects::Texture> m_texture;
-	gloperate::ScreenAlignedQuad * m_quad;
+	globjects::ref_ptr<gloperate::ScreenAlignedQuad> m_quad;
 
 	InputHandling * m_inputHandler;
 	gloperate_glraw::TextureFilter m_filter;

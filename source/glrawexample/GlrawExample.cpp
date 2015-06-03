@@ -69,11 +69,9 @@ void GlrawExample::onInitialize()
 		m_texture = m_filter.process(tmp);
 	}
 
-	m_pos = new glm::vec2(0.f, 0.f);
-	m_size = new glm::vec2(m_viewportCapability->width(), m_viewportCapability->height());
-	m_zoom = 1.f;
+	m_size = glm::vec2(m_viewportCapability->width(), m_viewportCapability->height());
 	m_quad = new gloperate::ScreenAlignedQuad(globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/glrawexample/screen.frag"), m_texture);
-	m_quad->program()->setUniform("size", *m_size);
+	m_quad->program()->setUniform("size", m_size);
 
 	gl::glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
 
@@ -90,14 +88,14 @@ void GlrawExample::onPaint()
             m_viewportCapability->y(),
             m_viewportCapability->width(),
             m_viewportCapability->height());
-		m_size->x = m_viewportCapability->width();
-		m_size->y = m_viewportCapability->height();
+		m_size.x = m_viewportCapability->width();
+		m_size.y = m_viewportCapability->height();
 
         m_viewportCapability->setChanged(false);
     }
 
 	gl::glClear(gl::GL_COLOR_BUFFER_BIT);
-	m_quad->program()->setUniform("pos", *m_pos);
-	m_quad->program()->setUniform("zoom", m_zoom);
+	m_quad->program()->setUniform("pos", m_inputHandler->getPos());
+	m_quad->program()->setUniform("zoom", m_inputHandler->getZoom());
 	m_quad->draw();
 }
