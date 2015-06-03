@@ -1,7 +1,5 @@
 #include "Dithering.h"
 
-//#include <glm/gtc/constants.hpp>
-
 #include <glbinding/gl/enum.h>
 #include <glbinding/gl/bitfield.h>
 #include <glbinding/gl/boolean.h>
@@ -15,19 +13,14 @@
 #include <globjects/Shader.h>
 #include <globjects/Texture.h>
 
-#include <gloperate/painter/AbstractInputCapability.h>
-#include <gloperate/painter/InputCapability.h>
-#include <gloperate/painter/TargetFramebufferCapability.h>
+#include <gloperate/resources/ResourceManager.h>
 #include <gloperate/painter/ViewportCapability.h>
 #include <gloperate/primitives/ScreenAlignedQuad.h>
 
 
-#include <reflectionzeug/PropertyGroup.h>
-
 
 Dithering::Dithering( gloperate::ResourceManager & resourceManager )
 :   Painter(resourceManager)
-,   m_targetFramebufferCapability(addCapability(new gloperate::TargetFramebufferCapability()))
 ,   m_viewportCapability(addCapability(new gloperate::ViewportCapability()))
 ,	m_options(this)
 ,	m_changed(false)
@@ -38,7 +31,7 @@ Dithering::~Dithering() = default;
 
 void Dithering::loadTexture()
 {
-	m_dithered = m_loader.load(m_options.imagePathString(), nullptr);
+	m_dithered = m_resourceManager.load<globjects::Texture>(m_options.imagePathString());
 	if (m_dithered == nullptr)
 	{
 		globjects::fatal() << "Couldn't load image: " << m_options.imagePathString() << " !";

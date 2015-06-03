@@ -53,6 +53,8 @@ public:
 
 private:
 
+	static bool isPowerOfTwo(unsigned int number);
+
 	Dithering * const m_owner;
 
 	int m_chunkSize;

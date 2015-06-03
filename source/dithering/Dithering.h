@@ -8,8 +8,6 @@
 
 #include <gloperate/painter/Painter.h>
 
-#include <gloperate-qt/QtTextureLoader.h>
-
 #include "DitheringOptions.h"
 
 namespace globjects
@@ -20,9 +18,7 @@ namespace globjects
 
 namespace gloperate
 {
-    class AbstractTargetFramebufferCapability;
     class AbstractViewportCapability;
-
 	class ScreenAlignedQuad;
 }
 
@@ -45,11 +41,9 @@ protected:
 
 protected:
     /* capabilities */
-    gloperate::AbstractTargetFramebufferCapability * m_targetFramebufferCapability;
     gloperate::AbstractViewportCapability * m_viewportCapability;
 
     /* members */
-	const gloperate_qt::QtTextureLoader m_loader;
 	DitheringOptions m_options;
 
 	globjects::ref_ptr<globjects::Texture> m_dithered;

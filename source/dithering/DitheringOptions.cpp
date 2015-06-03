@@ -2,6 +2,8 @@
 
 #include "Dithering.h"
 
+#include <globjects/logging.h>
+
 DitheringOptions::DitheringOptions(Dithering * owner)
  :	m_owner(owner)
  ,	m_chunkSize(16)
@@ -17,8 +19,8 @@ DitheringOptions::DitheringOptions(Dithering * owner)
 	owner->addProperty<int>("chunk_size", this,
 		&DitheringOptions::chunkSize,
 		&DitheringOptions::setChunkSize)->setOptions({
-			{ "minimum", 8 },
-			{ "maximum", 1024 } });
+			{ "minimum", 1 },
+			{ "maximum", 8192 } });
 
 	owner->addProperty<DitheringPalette>("palette", this,
 		&DitheringOptions::palette,
@@ -42,8 +44,32 @@ DitheringOptions::DitheringOptions(Dithering * owner)
 
 void DitheringOptions::setChunkSize(int size)
 {
-	m_chunkSize = size;
-	m_owner->setOptionsChanged();
+	if (size == m_chunkSize + 1)
+	{
+		size = m_chunkSize * 2;
+	}
+	else if (size == m_chunkSize - 1)
+	{
+		size = m_chunkSize / 2;
+	}
+
+	if (size < 8)
+	{
+		globjects::debug() << "The minimum valid chunk_size is 8. Entered: " << size;
+	}
+	else if (size > 8192)
+	{
+		globjects::debug() << "The maximum valid chunk_size is 8192. Entered: " << size;
+	}
+	else if (isPowerOfTwo(size))
+	{
+		m_chunkSize = size;
+		m_owner->setOptionsChanged();
+	}
+	else
+	{
+		globjects::debug() << "chunk_size is not a power of 2. Entered: " << size;
+	}
 }
 
 int DitheringOptions::chunkSize() const
@@ -113,4 +139,9 @@ void DitheringOptions::setImagePath(FilePath path)
 {
 	m_imagePath = path.string();
 	m_owner->setOptionsChanged();
+}
+
+bool DitheringOptions::isPowerOfTwo(unsigned int number)
+{ 
+	return (number & (number - 1)) == 0;
 }
