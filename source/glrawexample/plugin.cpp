@@ -4,6 +4,15 @@
 
 #include <glexamples-version.h>
 
+namespace gloperate
+{
+	template <>
+	Painter * PainterPlugin<GlrawExample>::createPainter(ResourceManager & resourceManager, std::unique_ptr<gloperate_qt::QtOpenGLWindow>& canvas) const
+	{
+		return new GlrawExample(resourceManager, canvas);
+	}
+}
+
 GLOPERATE_PLUGIN_LIBRARY
 
     GLOPERATE_PLUGIN(GlrawExample

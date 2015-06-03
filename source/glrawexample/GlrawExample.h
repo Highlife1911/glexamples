@@ -30,10 +30,15 @@ namespace gloperate
 	class InputCapability;
 }
 
+namespace gloperate_qt
+{
+	class QtOpenGLWindow;
+}
+
 class GlrawExample : public gloperate::Painter
 {
 public:
-    GlrawExample(gloperate::ResourceManager & resourceManager);
+	GlrawExample(gloperate::ResourceManager & resourceManager, std::unique_ptr<gloperate_qt::QtOpenGLWindow>& canvas);
     virtual ~GlrawExample();
 
 	void setupProjection();

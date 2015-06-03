@@ -30,13 +30,14 @@
 
 using widgetzeug::make_unique;
 
-GlrawExample::GlrawExample(gloperate::ResourceManager & resourceManager)
+GlrawExample::GlrawExample(gloperate::ResourceManager & resourceManager, std::unique_ptr<gloperate_qt::QtOpenGLWindow>& canvas)
 	: Painter(resourceManager)
 	, m_targetFramebufferCapability(addCapability(new gloperate::TargetFramebufferCapability()))
 	, m_viewportCapability(addCapability(new gloperate::ViewportCapability()))
 	, m_projectionCapability(addCapability(new gloperate::PerspectiveProjectionCapability(m_viewportCapability)))
 	, m_cameraCapability(addCapability(new gloperate::CameraCapability()))
 	, m_inputCapability(addCapability(new gloperate::InputCapability()))
+	, m_filter(canvas)
 {
 }
 
@@ -52,6 +53,7 @@ void GlrawExample::onInitialize()
     // create program
 
     globjects::init();
+	globjects::DebugMessage::enable(true);
 
 #ifdef __APPLE__
     Shader::clearGlobalReplacements();
