@@ -1,33 +1,27 @@
 #pragma once
 
-#include "InputHandling.h"
-
 #include <memory>
 
-#include <glbinding/gl/types.h>
+#include <glm/vec2.hpp>
 
 #include <globjects/base/ref_ptr.h>
-#include <globjects/Texture.h>
-#include <globjects/Framebuffer.h>
 
 #include <gloperate/painter/Painter.h>
-
-#include <gloperate\primitives\ScreenAlignedQuad.h>
-
 #include <gloperate-glraw/TextureFilter.h>
 
 namespace globjects
 {
     class Program;
+	class Texture;
+	class Framebuffer;
 }
 
 namespace gloperate
 {
     class AbstractTargetFramebufferCapability;
     class AbstractViewportCapability;
-    class AbstractPerspectiveProjectionCapability;
-    class AbstractCameraCapability;
 	class InputCapability;
+	class ScreenAlignedQuad;
 }
 
 namespace gloperate_qt
@@ -35,26 +29,21 @@ namespace gloperate_qt
 	class QtOpenGLWindow;
 }
 
+class InputHandling;
+
 class GlrawExample : public gloperate::Painter
 {
 public:
 	GlrawExample(gloperate::ResourceManager & resourceManager, std::unique_ptr<gloperate_qt::QtOpenGLWindow>& canvas);
     virtual ~GlrawExample();
 
-	void setupProjection();
 protected:
 	virtual void onInitialize() override;
     virtual void onPaint() override;
 
-public:
-	glm::vec2 m_size;
-
-protected:
     /* capabilities */
     gloperate::AbstractTargetFramebufferCapability * m_targetFramebufferCapability;
     gloperate::AbstractViewportCapability * m_viewportCapability;
-    gloperate::AbstractPerspectiveProjectionCapability * m_projectionCapability;
-    gloperate::AbstractCameraCapability * m_cameraCapability;
 	gloperate::InputCapability * m_inputCapability;
 
     /* members */
@@ -64,5 +53,7 @@ protected:
 	globjects::ref_ptr<gloperate::ScreenAlignedQuad> m_quad;
 
 	InputHandling * m_inputHandler;
+
 	gloperate_glraw::TextureFilter m_filter;
+	glm::vec2 m_size;
 };

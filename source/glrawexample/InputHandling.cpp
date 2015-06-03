@@ -4,7 +4,6 @@
 
 InputHandling::InputHandling(GlrawExample * handle) :
 m_handle(handle),
-m_pos(glm::vec2(0.f,0.f)),
 m_zoom(1.f)
 {
 }
@@ -37,11 +36,11 @@ void InputHandling::onKeyUp(gloperate::Key key)
 	}
 }
 
-glm::vec2 InputHandling::getPos()
+glm::vec2 InputHandling::getPos() const
 {
 	return m_pos;
 }
-float InputHandling::getZoom()
+float InputHandling::getZoom() const
 {
 	return m_zoom;
 }

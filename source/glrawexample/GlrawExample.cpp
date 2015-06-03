@@ -1,59 +1,35 @@
 #include "GlrawExample.h"
 
-#include <glm/gtc/constants.hpp>
-
 #include <glbinding/gl/enum.h>
 #include <glbinding/gl/bitfield.h>
-#include <glbinding/Binding.h>
 
 #include <globjects/globjects.h>
-#include <globjects/logging.h>
-#include <globjects/DebugMessage.h>
 
-
-#include <widgetzeug/make_unique.hpp>
-
-#include <gloperate/base/RenderTargetType.h>
-
+#include <gloperate/input/KeyboardInputHandler.h>
+#include <gloperate/resources/ResourceManager.h>
 #include <gloperate/painter/TargetFramebufferCapability.h>
 #include <gloperate/painter/ViewportCapability.h>
-#include <gloperate/painter/PerspectiveProjectionCapability.h>
-#include <gloperate/painter/CameraCapability.h>
-#include <gloperate/painter/VirtualTimeCapability.h>
 #include <gloperate/painter/InputCapability.h>
-#include <gloperate/input/KeyboardInputHandler.h>
+#include <gloperate/primitives/ScreenAlignedQuad.h>
 
-#include <globjects/Shader.h>
-#include <globjects/Program.h>
-
-#include <gloperate-qt/QtTextureLoader.h>
-
-using widgetzeug::make_unique;
+#include "InputHandling.h"
 
 GlrawExample::GlrawExample(gloperate::ResourceManager & resourceManager, std::unique_ptr<gloperate_qt::QtOpenGLWindow>& canvas)
 	: Painter(resourceManager)
 	, m_targetFramebufferCapability(addCapability(new gloperate::TargetFramebufferCapability()))
 	, m_viewportCapability(addCapability(new gloperate::ViewportCapability()))
-	, m_projectionCapability(addCapability(new gloperate::PerspectiveProjectionCapability(m_viewportCapability)))
-	, m_cameraCapability(addCapability(new gloperate::CameraCapability()))
 	, m_inputCapability(addCapability(new gloperate::InputCapability()))
+	, m_inputHandler(new InputHandling(this))
 	, m_filter(canvas)
 {
 }
 
 GlrawExample::~GlrawExample() = default;
 
-void GlrawExample::setupProjection()
-{
-    //static const auto zNear = 0.3f, zFar = 15.f, fovy = 50.f;
-}
-
 void GlrawExample::onInitialize()
 {
     // create program
-
     globjects::init();
-	globjects::DebugMessage::enable(true);
 
 #ifdef __APPLE__
     Shader::clearGlobalReplacements();
@@ -61,9 +37,8 @@ void GlrawExample::onInitialize()
 
     debug() << "Using global OS X shader replacement '#version 140' -> '#version 150'" << std::endl;
 #endif
-	gloperate_qt::QtTextureLoader * loader = new gloperate_qt::QtTextureLoader;
-	auto tmp = loader->load("C:/test.png", nullptr);
 
+	auto tmp = m_resourceManager.load<globjects::Texture>("data/glrawexample/test.png");
 	if (m_filter.addFilter("grayscale", QVariantMap()))
 	{
 		m_texture = m_filter.process(tmp);
@@ -75,7 +50,6 @@ void GlrawExample::onInitialize()
 
 	gl::glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
 
-	m_inputHandler = new InputHandling(this);
 	m_inputCapability->addKeyboardHandler(m_inputHandler);
 }
 
