@@ -1,46 +1,44 @@
 #include "InputHandling.h"
 
-#include "GlrawExample.h"
+#include <algorithm>
 
-InputHandling::InputHandling(GlrawExample * handle) :
-m_handle(handle),
-m_zoom(1.f)
+namespace
+{
+	const float MovementFactor = 1.0f;
+	const float ZoomFactor = 0.1f;
+}
+
+InputHandling::InputHandling()
+	: m_zoom(1.0f)
 {
 }
 
 void InputHandling::onKeyUp(gloperate::Key key)
 {
-	if (key == gloperate::KeyW)
+	switch(key)
 	{
-		m_pos.y += 1.f;
-	}
-	if (key == gloperate::KeyS)
-	{
-		m_pos.y -= 1.f;
-	}
-	if (key == gloperate::KeyD)
-	{
-		m_pos.x += 1.f;
-	}
-	if (key == gloperate::KeyA)
-	{
-		m_pos.x -= 1.f;
-	}
-	if (key == gloperate::KeyQ)
-	{
-		m_zoom += 0.1f;
-	}
-	if (key == gloperate::KeyE)
-	{
-		m_zoom -= 0.1f;
+	case gloperate::KeyW:	
+		m_pos.y += MovementFactor; break;
+	case gloperate::KeyS:	
+		m_pos.y -= MovementFactor; break;
+	case gloperate::KeyD:	
+		m_pos.x += MovementFactor; break;
+	case gloperate::KeyA:	
+		m_pos.x -= MovementFactor; break;
+	case gloperate::KeyQ:	
+		m_zoom += ZoomFactor; break;
+	case gloperate::KeyE:	
+		m_zoom -= ZoomFactor;
+		// Prevent a zooming factor of 0.0f
+		m_zoom = std::max(m_zoom, ZoomFactor); break;
 	}
 }
 
-glm::vec2 InputHandling::getPos() const
+glm::vec2 InputHandling::pos() const
 {
 	return m_pos;
 }
-float InputHandling::getZoom() const
+float InputHandling::zoom() const
 {
 	return m_zoom;
 }

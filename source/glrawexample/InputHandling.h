@@ -4,20 +4,18 @@
 
 #include <gloperate/input/KeyboardInputHandler.h>
 
-class GlrawExample;
-
 class InputHandling : public gloperate::KeyboardInputHandler
 {
 public:
-	InputHandling(GlrawExample * handle);
-	glm::vec2 getPos() const;
-	float getZoom() const;
+	InputHandling();
+
+	glm::vec2		pos() const;
+	float			zoom() const;
 
 protected:
-	void onKeyUp(gloperate::Key) override;
 
-	GlrawExample * m_handle;
+	virtual void	onKeyUp(gloperate::Key) override;
 
-	glm::vec2 m_pos;
-	float m_zoom;
+	glm::vec2	m_pos;
+	float		m_zoom;
 };

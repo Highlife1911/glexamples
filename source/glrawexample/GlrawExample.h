@@ -11,14 +11,12 @@
 
 namespace globjects
 {
-    class Program;
 	class Texture;
 	class Framebuffer;
 }
 
 namespace gloperate
 {
-    class AbstractTargetFramebufferCapability;
     class AbstractViewportCapability;
 	class InputCapability;
 	class ScreenAlignedQuad;
@@ -41,14 +39,14 @@ protected:
 	virtual void onInitialize() override;
     virtual void onPaint() override;
 
+	globjects::Texture* loadTexture(const std::string& path);
+	void updateScreenSize();
+
     /* capabilities */
-    gloperate::AbstractTargetFramebufferCapability * m_targetFramebufferCapability;
     gloperate::AbstractViewportCapability * m_viewportCapability;
 	gloperate::InputCapability * m_inputCapability;
 
     /* members */
-	globjects::ref_ptr<globjects::Program> m_program_blur_horizontal;
-	globjects::ref_ptr<globjects::Program> m_program_blur_vertical;
 	globjects::ref_ptr<globjects::Texture> m_texture;
 	globjects::ref_ptr<gloperate::ScreenAlignedQuad> m_quad;
 
