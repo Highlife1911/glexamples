@@ -11,11 +11,10 @@ in vec2 v_uv;
 
 void main()
 {
-	vec2 posN = pos/size;
 	ivec2 img_size = textureSize(source, 0);
-	vec2 offset = vec2((size.x - img_size.x*zoom)/(size.x*2),(size.y - img_size.y*zoom)/(size.y*2));
-	if(v_uv.x <= offset.x + posN.x || v_uv.x >= 1.f - offset.x + posN.x || v_uv.y <= offset.y + posN.y || v_uv.y >= 1.f - offset.y + posN.y)
-		discard;
-	vec3 color = texture(source, (v_uv-offset-posN)*size/img_size/zoom).xyz; 
-	fragColor = vec4(color,1.f);
+	vec2 posN = pos/size;
+	
+	vec2 offset = (size-img_size*zoom)/(2*size);
+	vec2 pos_abs = (v_uv-offset-posN*zoom)*size/img_size/zoom;
+	fragColor = vec4(texture(source, pos_abs).xyz, 1.f);
 }
