@@ -9,8 +9,10 @@ class InputHandling : public gloperate::KeyboardInputHandler
 public:
 	InputHandling();
 
-	glm::vec2		pos() const;
-	float			zoom() const;
+	void		setPos(glm::vec2 pos);
+	glm::vec2	pos() const;
+	void		setZoom(float zoom);
+	float		zoom() const;
 
 protected:
 

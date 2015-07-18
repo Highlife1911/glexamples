@@ -28,9 +28,7 @@ void InputHandling::onKeyUp(gloperate::Key key)
 	case gloperate::KeyQ:	
 		m_zoom += ZoomFactor; break;
 	case gloperate::KeyE:	
-		m_zoom -= ZoomFactor;
-		// Prevent a zooming factor of 0.0f
-		m_zoom = std::max(m_zoom, ZoomFactor); break;
+		setZoom(m_zoom - ZoomFactor); break;
 	}
 }
 
@@ -41,4 +39,14 @@ glm::vec2 InputHandling::pos() const
 float InputHandling::zoom() const
 {
 	return m_zoom;
+}
+
+void InputHandling::setPos(glm::vec2 pos)
+{
+	m_pos = pos;
+}
+
+void InputHandling::setZoom(float zoom)
+{
+	m_zoom = std::max(zoom, ZoomFactor);
 }

@@ -60,6 +60,18 @@ void ViewerExample::loadTexture()
 		return;
 	}
 
+	{
+		gl::GLint width = m_texture->getLevelParameter(0, gl::GL_TEXTURE_WIDTH);
+		gl::GLint height = m_texture->getLevelParameter(0, gl::GL_TEXTURE_HEIGHT);
+
+		float zoom_x = m_viewportCapability->width() / static_cast<float>(width);
+		float zoom_y = m_viewportCapability->height() / static_cast<float>(height);
+
+		static const int rounding = 10;
+		int zoom = static_cast<int>(std::min(zoom_x, zoom_y) * rounding);
+		m_inputHandler->setZoom(static_cast<float>(zoom) / rounding);
+	}
+
 	m_texture->setParameter(gl::GL_TEXTURE_WRAP_S, gl::GL_CLAMP_TO_BORDER);
 	m_texture->setParameter(gl::GL_TEXTURE_WRAP_T, gl::GL_CLAMP_TO_BORDER);
 	m_quad->setTexture(m_texture);
