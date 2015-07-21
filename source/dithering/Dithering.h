@@ -10,6 +10,8 @@
 
 #include "DitheringOptions.h"
 
+class InputHandling;
+
 namespace globjects
 {
 	class Texture;
@@ -20,6 +22,7 @@ namespace gloperate
 {
     class AbstractViewportCapability;
 	class ScreenAlignedQuad;
+	class InputCapability;
 }
 
 class Dithering : public gloperate::Painter
@@ -42,6 +45,7 @@ protected:
 protected:
     /* capabilities */
     gloperate::AbstractViewportCapability * m_viewportCapability;
+	gloperate::InputCapability * m_inputCapability;
 
     /* members */
 	DitheringOptions m_options;
@@ -51,6 +55,8 @@ protected:
 	globjects::ref_ptr<globjects::Framebuffer> m_fbo;
 	globjects::ref_ptr<gloperate::ScreenAlignedQuad> m_quad;
 	globjects::ref_ptr<gloperate::ScreenAlignedQuad> m_screen;
+
+	InputHandling * m_inputHandler;
 
 	glm::ivec2 m_textureSize;
 	bool m_changed;

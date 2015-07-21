@@ -6,9 +6,9 @@
 
 DitheringOptions::DitheringOptions(Dithering * owner)
  :	m_owner(owner)
- ,	m_chunkSize(16)
+ ,	m_chunkSize(32)
  ,	m_palette(DitheringPalette::Greyscale)
- ,	m_greyscalePalette(8)
+ ,	m_greyscalePalette(12)
  ,  m_imagePath("data/dithering/dithering.png")
  ,  m_formula(GreyscaleFormula::Modern)
 {
@@ -20,22 +20,23 @@ DitheringOptions::DitheringOptions(Dithering * owner)
 		&DitheringOptions::chunkSize,
 		&DitheringOptions::setChunkSize)->setOptions({
 			{ "minimum", 1 },
-			{ "maximum", 8192 } });
-
+			{ "maximum", 512 } });
+	/*
 	owner->addProperty<DitheringPalette>("palette", this,
 		&DitheringOptions::palette,
 		&DitheringOptions::setPalette)->setStrings({
-			{ DitheringPalette::Greyscale, "Greyscale" },
+			{ DitheringPalette::Grayscale, "Greyscale" },
 			{ DitheringPalette::Reduced, "16 colors" },
 			{ DitheringPalette::Full, "256 colors" } });
+			*/
 
-	owner->addProperty<int>("grey_colors", this,
+	owner->addProperty<int>("gray_colors", this,
 		&DitheringOptions::greyscalePalette,
 		&DitheringOptions::setGreyscalePalette)->setOptions({
 			{ "minimum", 2 },
 			{ "maximum", 256 } });
 
-	owner->addProperty<GreyscaleFormula>("grey_formula", this,
+	owner->addProperty<GreyscaleFormula>("gray_formula", this,
 		&DitheringOptions::formula,
 		&DitheringOptions::setFormula)->setStrings({
 			{ GreyscaleFormula::Classic, "Classic" },
@@ -93,9 +94,9 @@ int DitheringOptions::greyscalePalette() const
 	return m_greyscalePalette;
 }
 
-void DitheringOptions::setGreyscalePalette(int bits)
+void DitheringOptions::setGreyscalePalette(int colors)
 {
-	m_greyscalePalette = bits;
+	m_greyscalePalette = colors;
 	m_owner->setOptionsChanged();
 }
 
@@ -109,13 +110,13 @@ glm::vec3 DitheringOptions::formulaData() const
 	switch (m_formula)
 	{
 	case GreyscaleFormula::Classic:
-		return glm::vec3(0.299f, 0.587f, 0.114f);
+		return { 0.299f, 0.587f, 0.114f };
 
 	case GreyscaleFormula::Modern:
-		return glm::vec3(0.2126f, 0.7152f, 0.0722f);
+		return { 0.2126f, 0.7152f, 0.0722f };
 
 	default:
-		return glm::vec3();
+		return {};
 	}
 }
 

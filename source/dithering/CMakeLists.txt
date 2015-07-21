@@ -57,12 +57,14 @@ set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/")
 set(sources
     ${source_path}/Dithering.cpp
     ${source_path}/DitheringOptions.cpp
+    ${source_path}/InputHandling.cpp
     ${source_path}/plugin.cpp
 )
 
 set(api_includes
     ${include_path}/Dithering.h
     ${include_path}/DitheringOptions.h
+    ${include_path}/InputHandling.h
 )
 
 # Group source files

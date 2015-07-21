@@ -15,14 +15,17 @@
 
 #include <gloperate/resources/ResourceManager.h>
 #include <gloperate/painter/ViewportCapability.h>
+#include <gloperate/painter/InputCapability.h>
 #include <gloperate/primitives/ScreenAlignedQuad.h>
 
-
+#include "InputHandling.h"
 
 Dithering::Dithering( gloperate::ResourceManager & resourceManager )
 :   Painter(resourceManager)
 ,   m_viewportCapability(addCapability(new gloperate::ViewportCapability()))
+,	m_inputCapability(addCapability(new gloperate::InputCapability()))
 ,	m_options(this)
+,	m_inputHandler(new InputHandling())
 ,	m_changed(false)
 {
 }
@@ -36,6 +39,11 @@ void Dithering::loadTexture()
 	{
 		globjects::fatal() << "Couldn't load image: " << m_options.imagePathString() << " !";
 	}
+
+	m_dithered->setParameter(gl::GL_TEXTURE_WRAP_S, gl::GL_CLAMP_TO_BORDER);
+	m_dithered->setParameter(gl::GL_TEXTURE_WRAP_T, gl::GL_CLAMP_TO_BORDER);
+	m_dithered->setParameter(gl::GL_TEXTURE_MIN_FILTER, gl::GL_NEAREST);
+	m_dithered->setParameter(gl::GL_TEXTURE_MAG_FILTER, gl::GL_NEAREST);
 
 	m_textureSize.x = m_dithered->getLevelParameter(0, gl::GL_TEXTURE_WIDTH);
 	m_textureSize.y = m_dithered->getLevelParameter(0, gl::GL_TEXTURE_HEIGHT);
@@ -87,11 +95,13 @@ void Dithering::onInitialize()
 	globjects::debug() << "Using global OS X shader replacement '#version 140' -> '#version 150'" << std::endl;
 #endif
 
+	m_inputCapability->addKeyboardHandler(m_inputHandler);
+
 	loadTexture();
 
 	m_fbo = new globjects::Framebuffer;
 	m_quad = new gloperate::ScreenAlignedQuad(globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/dithering/dither.frag"), m_dithered);
-	m_screen = new gloperate::ScreenAlignedQuad(m_dithered);
+	m_screen = new gloperate::ScreenAlignedQuad(globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/dithering/screen.frag"), m_dithered);
 
 	setupFramebuffer();
 	updateUniforms();
@@ -101,11 +111,8 @@ void Dithering::onInitialize()
 	dither();
 }
 
-//#include <chrono>
-
 void Dithering::onPaint()
 {
-	//auto n = std::chrono::high_resolution_clock::now();
     if (m_viewportCapability->hasChanged())
     {
         gl::glViewport(
@@ -113,6 +120,9 @@ void Dithering::onPaint()
             m_viewportCapability->y(),
             m_viewportCapability->width(),
             m_viewportCapability->height());
+
+		glm::vec2 size = { m_viewportCapability->width(), m_viewportCapability->height() };
+		m_screen->program()->setUniform("size", size);
 
         m_viewportCapability->setChanged(false);
     }
@@ -130,9 +140,10 @@ void Dithering::onPaint()
 
 	gl::glClear(gl::GL_COLOR_BUFFER_BIT);
 
-	m_screen->draw();
 
-	//std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - n).count() << std::endl;
+	m_screen->program()->setUniform("pos", m_inputHandler->pos());
+	m_screen->program()->setUniform("zoom", m_inputHandler->zoom());
+	m_screen->draw();
 }
 
 void Dithering::setOptionsChanged()
