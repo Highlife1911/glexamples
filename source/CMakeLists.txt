@@ -37,10 +37,8 @@ set(GLEXAMPLES_DEPENDENCY_LIBRARIES
 
 # Applications
 set(IDE_FOLDER "")
-add_subdirectory(dithering)
+add_subdirectory(image)
 add_subdirectory(emptyexample)
-add_subdirectory(viewerexample)
-add_subdirectory(glrawexample)
 add_subdirectory(openglexample)
 add_subdirectory(transparency)
 add_subdirectory(glexamples-viewer)

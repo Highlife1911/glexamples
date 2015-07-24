@@ -2,17 +2,17 @@
 
 #include <memory>
 
-#include <glm/vec2.hpp>
-
 #include <globjects/base/ref_ptr.h>
 
 #include <gloperate/painter/Painter.h>
+
 #include <gloperate-glraw/TextureFilter.h>
+
+#include "ViewerOptions.h"
 
 namespace globjects
 {
 	class Texture;
-	class Framebuffer;
 }
 
 namespace gloperate
@@ -29,18 +29,19 @@ namespace gloperate_qt
 
 class InputHandling;
 
-class GlrawExample : public gloperate::Painter
+class Viewer : public gloperate::Painter
 {
 public:
-	GlrawExample(gloperate::ResourceManager & resourceManager, std::unique_ptr<gloperate_qt::QtOpenGLWindow>& canvas);
-    virtual ~GlrawExample();
+	Viewer(gloperate::ResourceManager & resourceManager, std::unique_ptr<gloperate_qt::QtOpenGLWindow>& canvas);
+    virtual ~Viewer() = default;
 
 protected:
 	virtual void onInitialize() override;
     virtual void onPaint() override;
 
-	globjects::Texture* loadTexture(const std::string& path);
+	void loadTexture();
 	void updateScreenSize();
+	bool initializePipeline();
 
     /* capabilities */
     gloperate::AbstractViewportCapability * m_viewportCapability;
@@ -50,8 +51,9 @@ protected:
 	globjects::ref_ptr<globjects::Texture> m_texture;
 	globjects::ref_ptr<gloperate::ScreenAlignedQuad> m_quad;
 
-	InputHandling * m_inputHandler;
-
 	gloperate_glraw::TextureFilter m_filter;
-	glm::vec2 m_size;
+
+	ViewerOptions m_options;
+
+	InputHandling * m_inputHandler;
 };

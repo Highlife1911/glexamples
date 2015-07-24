@@ -101,7 +101,7 @@ void Dithering::onInitialize()
 
 	m_fbo = new globjects::Framebuffer;
 	m_quad = new gloperate::ScreenAlignedQuad(globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/dithering/dither.frag"), m_dithered);
-	m_screen = new gloperate::ScreenAlignedQuad(globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/dithering/screen.frag"), m_dithered);
+	m_screen = new gloperate::ScreenAlignedQuad(globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/viewer/screen.frag"), m_dithered);
 
 	setupFramebuffer();
 	updateUniforms();

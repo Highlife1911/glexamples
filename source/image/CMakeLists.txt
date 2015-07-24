@@ -1,5 +1,5 @@
 
-set(target dithering-painters)
+set(target Viewer-painters)
 message(STATUS "Example ${target}")
 
 
@@ -14,6 +14,9 @@ if(MSVC)
 endif()
 
 find_package(Qt5Core    5.1 REQUIRED)
+find_package(Qt5Gui     5.1 REQUIRED)
+find_package(Qt5Widgets 5.1 REQUIRED)
+find_package(Qt5OpenGL  5.1 REQUIRED)
 
 if (NOT Qt5Core_FOUND)
     message("App ${target} skipped: Qt5 not found")
@@ -30,6 +33,7 @@ include_directories(
     BEFORE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
+    ${GLRAW_INCLUDE_DIR}
 )
 
 
@@ -38,6 +42,9 @@ include_directories(
 set(libs
     ${GLEXAMPLES_DEPENDENCY_LIBRARIES}
     Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+    Qt5::OpenGL
 )
 
 
@@ -55,15 +62,23 @@ set(include_path "${CMAKE_CURRENT_SOURCE_DIR}/")
 set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/")
 
 set(sources
-    ${source_path}/Dithering.cpp
-    ${source_path}/DitheringOptions.cpp
+    ${source_path}/viewer/Viewer.cpp
+    ${source_path}/viewer/ViewerOptions.cpp
+
+    ${source_path}/dithering/Dithering.cpp
+    ${source_path}/dithering/DitheringOptions.cpp
+
     ${source_path}/InputHandling.cpp
     ${source_path}/plugin.cpp
 )
 
 set(api_includes
-    ${include_path}/Dithering.h
-    ${include_path}/DitheringOptions.h
+    ${include_path}/viewer/Viewer.h
+    ${include_path}/viewer/ViewerOptions.h
+
+    ${include_path}/dithering/Dithering.h
+    ${include_path}/dithering/DitheringOptions.h
+
     ${include_path}/InputHandling.h
 )
 

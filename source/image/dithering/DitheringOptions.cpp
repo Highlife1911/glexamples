@@ -7,9 +7,8 @@
 DitheringOptions::DitheringOptions(Dithering * owner)
  :	m_owner(owner)
  ,	m_chunkSize(32)
- ,	m_palette(DitheringPalette::Greyscale)
  ,	m_greyscalePalette(12)
- ,  m_imagePath("data/dithering/dithering.png")
+ ,  m_imagePath("data/viewer/test.png")
  ,  m_formula(GreyscaleFormula::Modern)
 {
 	owner->addProperty<reflectionzeug::FilePath>("image", this,
@@ -21,14 +20,6 @@ DitheringOptions::DitheringOptions(Dithering * owner)
 		&DitheringOptions::setChunkSize)->setOptions({
 			{ "minimum", 1 },
 			{ "maximum", 512 } });
-	/*
-	owner->addProperty<DitheringPalette>("palette", this,
-		&DitheringOptions::palette,
-		&DitheringOptions::setPalette)->setStrings({
-			{ DitheringPalette::Grayscale, "Greyscale" },
-			{ DitheringPalette::Reduced, "16 colors" },
-			{ DitheringPalette::Full, "256 colors" } });
-			*/
 
 	owner->addProperty<int>("gray_colors", this,
 		&DitheringOptions::greyscalePalette,
@@ -76,17 +67,6 @@ void DitheringOptions::setChunkSize(int size)
 int DitheringOptions::chunkSize() const
 {
 	return m_chunkSize;
-}
-
-DitheringPalette DitheringOptions::palette() const
-{
-	return m_palette;
-}
-
-void DitheringOptions::setPalette(DitheringPalette p)
-{
-	m_palette = p;
-	m_owner->setOptionsChanged();
 }
 
 int DitheringOptions::greyscalePalette() const

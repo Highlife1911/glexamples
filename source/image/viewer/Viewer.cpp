@@ -1,13 +1,11 @@
-#include "ViewerExample.h"
+#include "Viewer.h"
 
 #include <glm/vec2.hpp>
 
 #include <glbinding/gl/enum.h>
-#include <glbinding/gl/bitfield.h>
 
 #include <globjects/globjects.h>
 
-#include <gloperate/input/KeyboardInputHandler.h>
 #include <gloperate/resources/ResourceManager.h>
 #include <gloperate/painter/ViewportCapability.h>
 #include <gloperate/painter/InputCapability.h>
@@ -15,25 +13,24 @@
 
 #include "InputHandling.h"
 
-namespace
-{
-	const std::string DefaultImagePath = "data/ViewerExample/test.png";
-}
 
-ViewerExample::ViewerExample(gloperate::ResourceManager & resourceManager)
+Viewer::Viewer(gloperate::ResourceManager & resourceManager, std::unique_ptr<gloperate_qt::QtOpenGLWindow>& canvas)
 	: Painter(resourceManager)
 	, m_viewportCapability(addCapability(new gloperate::ViewportCapability()))
 	, m_inputCapability(addCapability(new gloperate::InputCapability()))
+	, m_filter(canvas)
 	, m_inputHandler(new InputHandling())
-	, m_imagePath(DefaultImagePath)
-	, m_changed(false)
 {
-	addProperty<reflectionzeug::FilePath>("Image", this,
-		&ViewerExample::imagePath,
-		&ViewerExample::setImagePath);
+	addProperty<reflectionzeug::FilePath>("image", &m_options,
+		&ViewerOptions::imagePath,
+		&ViewerOptions::setImagePath);
+
+	addProperty<bool>("pipeline", &m_options,
+		&ViewerOptions::pipeline,
+		&ViewerOptions::setPipeline);
 }
 
-void ViewerExample::onInitialize()
+void Viewer::onInitialize()
 {
 	globjects::init();
 
@@ -46,18 +43,59 @@ void ViewerExample::onInitialize()
 
 	m_inputCapability->addKeyboardHandler(m_inputHandler);
 
-	m_quad = new gloperate::ScreenAlignedQuad(globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/ViewerExample/screen.frag"));
+	if(!initializePipeline())
+	{
+		globjects::debug() << "Error while building the pipeline." << std::endl;
+	}
+
+	m_quad = new gloperate::ScreenAlignedQuad(globjects::Shader::fromFile(gl::GL_FRAGMENT_SHADER, "data/viewer/screen.frag"));
 	loadTexture();
 	updateScreenSize();
 }
 
-void ViewerExample::loadTexture()
+bool Viewer::initializePipeline()
 {
-	m_texture = m_resourceManager.load<globjects::Texture>(imagePath().toString());
-	if(m_texture == nullptr)
+	if(!m_filter.addFilter("brightness", { { "amount", 0.1 } }))
 	{
-		globjects::debug() << "Error while loading '" << imagePath().toString() << "'." << std::endl;
-		return;
+		return false;
+	}
+	
+	if(!m_filter.addFilter("erosion", { { "size", 4 } }))
+	{
+		return false;
+	}
+
+	if(!m_filter.addFilter("radialblur", { { "x", 0.2 }, { "y", 0.3 }, {"blur", 0.15} }))
+	{
+		return false;
+	}
+
+	if(!m_filter.addFilter("grayscale"))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void Viewer::loadTexture()
+{
+	{
+		globjects::ref_ptr<globjects::Texture> tex = m_resourceManager.load<globjects::Texture>(m_options.imagePath().toString());
+		if(tex == nullptr)
+		{
+			globjects::debug() << "Error while loading '" << m_options.imagePath().toString() << "'." << std::endl;
+			return;
+		}
+
+		if(m_options.pipeline())
+		{
+			m_texture = m_filter.process(tex);
+		}
+		else
+		{
+			m_texture = tex;
+		}
 	}
 
 	{
@@ -77,18 +115,18 @@ void ViewerExample::loadTexture()
 	m_quad->setTexture(m_texture);
 }
 
-void ViewerExample::updateScreenSize()
+void Viewer::updateScreenSize()
 {
 	glm::vec2 size = { m_viewportCapability->width(), m_viewportCapability->height() };
 	m_quad->program()->setUniform("size", size);
 }
 
-void ViewerExample::onPaint()
+void Viewer::onPaint()
 {
-	if(m_changed)
+	if(m_options.changed())
 	{
 		loadTexture();
-		m_changed = false;
+		m_options.setChanged(false);
 	}
 
 	if(m_viewportCapability->hasChanged())
@@ -106,15 +144,4 @@ void ViewerExample::onPaint()
 	m_quad->program()->setUniform("pos", m_inputHandler->pos());
 	m_quad->program()->setUniform("zoom", m_inputHandler->zoom());
 	m_quad->draw();
-}
-
-void ViewerExample::setImagePath(const reflectionzeug::FilePath & path)
-{
-	m_imagePath = path;
-	m_changed = true;
-}
-
-reflectionzeug::FilePath ViewerExample::imagePath() const
-{
-	return m_imagePath;
 }
