@@ -55,27 +55,21 @@ void Viewer::onInitialize()
 
 bool Viewer::initializePipeline()
 {
-	if(!m_filter.addFilter("brightness", { { "amount", 0.1 } }))
+	return m_filter.addFilter(
 	{
-		return false;
-	}
-	
-	if(!m_filter.addFilter("erosion", { { "size", 4 } }))
-	{
-		return false;
-	}
-
-	if(!m_filter.addFilter("radialblur", { { "x", 0.2 }, { "y", 0.3 }, {"blur", 0.15} }))
-	{
-		return false;
-	}
-
-	if(!m_filter.addFilter("grayscale"))
-	{
-		return false;
-	}
-
-	return true;
+		{ "brightness", 
+			{ { "amount", 0.1 } } 
+		},
+		{ "erosion", 
+			{ { "size", 4 } } 
+		},
+		{ "radialblur", 
+			{ { "x", 0.2 }, { "y", 0.3 }, { "blur", 0.15 } } 
+		},
+		{ "grayscale", 
+			{} 
+		}
+	});
 }
 
 void Viewer::loadTexture()
